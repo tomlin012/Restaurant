@@ -5,13 +5,19 @@ name = "pypi"
 
 [packages]
 fastapi = "*"
-sqlalchemy = "*"
 jinja2 = "*"
 uvicorn = "*"
 cd = "*"
+boltons = "*"
+alembic = "*"
+pymysql = "*"
+sqlalchemy = "*"
+cryptography = "*"
+httptools = "*"
 
 [dev-packages]
 pylint = "*"
+autopep8 = "*"
 
 [requires]
 python_version = "3.10"
