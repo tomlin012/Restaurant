@@ -18,7 +18,7 @@ export default function SearchDataTable() {
 
     const deleteOrder = (event) => {
         fetch(
-            `http://localhost:8000/orders/table/${searchQuery}`,
+            `${process.env.REACT_APP_URL}/orders/table/${searchQuery}`,
             {
                 method: "DELETE",
                 headers: { "Content-Type": "application/json" },
@@ -58,7 +58,7 @@ export default function SearchDataTable() {
     const fetchOrder = (event) => {
         event.preventDefault()
         setSearchQuery(inputQuery)
-        fetch(`http://localhost:8000/orders/table/${inputQuery}`)
+        fetch(`${process.env.REACT_APP_URL}/orders/table/${inputQuery}`)
             .then(res => {
                 if (!res.ok) {
                     return res.text().then(text => { throw new Error(text) })

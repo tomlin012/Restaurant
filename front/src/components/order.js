@@ -18,10 +18,10 @@ export default function CheckboxesGroup() {
 	const [tables, setTables] = React.useState([])
 	const [tableID, setTableID] = React.useState("")
 	const [checkedState, SetCheckedState] = React.useState([])
-
+	
 	useEffect(() => {
 		const abortCont = new AbortController()
-		fetch("http://localhost:8000/orders/items", { signal: abortCont.signal })
+		fetch(`${process.env.REACT_APP_URL}/orders/items`, { signal: abortCont.signal })
 			.then(res => res.json())
 			.then((result) => {
 				setItems(result)
@@ -39,7 +39,7 @@ export default function CheckboxesGroup() {
 
 	useEffect(() => {
 		const abortCont = new AbortController()
-		fetch("http://localhost:8000/orders/tables", { signal: abortCont.signal })
+		fetch(`${process.env.REACT_APP_URL}/orders/tables`, { signal: abortCont.signal })
 			.then(res => res.json())
 			.then((result) => {
 				setTables(result)
@@ -76,7 +76,7 @@ export default function CheckboxesGroup() {
 			return
 		}
 		fetch(
-			`http://localhost:8000/orders/table/${tableID}`,
+			`${process.env.REACT_APP_URL}/orders/table/${tableID}`,
 			{
 				method: "POST",
 				headers: { "Content-Type": "application/json" },
