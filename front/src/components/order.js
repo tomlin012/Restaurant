@@ -86,6 +86,8 @@ export default function CheckboxesGroup() {
 			if (!res.ok) {
 				return res.text().then(text => { throw new Error(text) })
 			} else {
+				setTableID("")
+				SetCheckedState((r)=>new Array(r.length).fill(false))
 				console.log("insert succeed")
 			}
 		}).catch(err => {
