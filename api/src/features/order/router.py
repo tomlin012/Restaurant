@@ -1,11 +1,10 @@
-import datetime
 import http
 
 from typing import List
 import fastapi
 import sqlalchemy as sa
 
-from src import database, utils
+from src import database
 from src.features.order import models, schemas
 
 
@@ -55,31 +54,18 @@ def get_order_by_table_id(table_id: int):
 )
 def insert_order(
     table_id: int,
-    payload: schemas.InsertOrderRequest,
+    payload: List[schemas.InsertOrderRequest],
 ):
-    current_time = utils.utcnow()
-    get_item_duration_stmt = (
-        sa.select(models.Item).
-        where(models.Item.id.in_(payload.item_ids))
-    )
     with database.session(expire_on_commit=False) as session:
-        items = session.execute(get_item_duration_stmt).scalars().all()
-        if len(items) < len(payload.item_ids):
-            raise fastapi.HTTPException(
-                http.HTTPStatus.UNPROCESSABLE_ENTITY,
-                detail="item id not found",
-            )
         session.bulk_insert_mappings(
             models.Order,
             tuple(
                 {
                     "table_id": table_id,
-                    "item_id": item.id,
-                    "ended_at": current_time + datetime.timedelta(
-                        seconds = item.duration
-                    ),
+                    "item_id": order.item_id,
+                    "prepare_time": order.prepare_time,
                 }
-                for item in items
+                for order in payload
             ),
         )
         session.commit()

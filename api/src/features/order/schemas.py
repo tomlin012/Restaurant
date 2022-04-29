@@ -3,7 +3,8 @@ import pydantic
 
 
 class InsertOrderRequest(pydantic.BaseModel):
-    item_ids: pydantic.conlist(int, min_items=1)
+    item_id: int
+    prepare_time: int
 
 
 class DeleteOrderRequest(pydantic.BaseModel):
@@ -14,7 +15,7 @@ class GetOrderResponse(pydantic.BaseModel):
     id: int
     table_id: int
     item_id: int
-    ended_at: datetime.datetime
+    prepare_time: int
 
     class Config:
         orm_mode = True
