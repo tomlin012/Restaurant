@@ -1,13 +1,10 @@
 import fastapi
-from fastapi import responses
 from fastapi.middleware.cors import CORSMiddleware
 
 
 def register_features(app: fastapi.FastAPI) -> None:
     from src.features import order
-    router = fastapi.APIRouter()
-    router.include_router(order.router)
-    app.include_router(router)
+    app.include_router(order.router)
 
 
 def make_asgi_app() -> fastapi.FastAPI:
