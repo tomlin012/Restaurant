@@ -48,6 +48,19 @@ def get_order_by_table_id(table_id: int):
         return session.execute(stmt).scalars().all()
 
 
+@router.get(
+    "/item/{item_id}",
+    response_model=List[schemas.GetOrderResponse],
+)
+def get_order_by_table_id(item_id: int):
+    stmt = (
+        sa.select(models.Order).
+        where(models.Order.item_id == item_id)
+    )
+    with database.session() as session:
+        return session.execute(stmt).scalars().all()
+
+
 @router.post(
     "/table/{table_id}",
     status_code=http.HTTPStatus.NO_CONTENT,
