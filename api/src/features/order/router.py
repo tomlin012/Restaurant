@@ -67,7 +67,7 @@ def get_order_by_table_id(item_id: int):
 )
 def insert_order(
     table_id: int,
-    payload: List[schemas.InsertOrderRequest],
+    payload: schemas.InsertOrderRequest,
 ):
     with database.session(expire_on_commit=False) as session:
         session.bulk_insert_mappings(
@@ -75,10 +75,10 @@ def insert_order(
             tuple(
                 {
                     "table_id": table_id,
-                    "item_id": order.item_id,
-                    "prepare_time": order.prepare_time,
+                    "item_id": item.id,
+                    "prepare_time": item.prepare_time,
                 }
-                for order in payload
+                for item in payload.items
             ),
         )
         session.commit()
