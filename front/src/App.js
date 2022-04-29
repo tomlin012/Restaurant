@@ -1,7 +1,8 @@
 import './App.css'
 import ResponsiveAppBar from './components/appbar'
 import CheckboxesGroup from './components/order'
-import SearchDataTable from './components/search'
+import SearchTable from './components/table'
+import SearchItem from './components/item'
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom'
 
 function App() {
@@ -13,7 +14,8 @@ function App() {
 					<Routes>
 						<Route exact path="/" element={<CheckboxesGroup />} />
 						<Route path="/order" element={<CheckboxesGroup />} />
-						<Route path="/search" element={<SearchDataTable />} />
+						<Route path="/table" element={<SearchTable />} />
+						<Route path="/item" element={<SearchItem />} />
 					</Routes>
 				</div>
 			</div>

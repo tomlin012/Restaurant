@@ -8,9 +8,7 @@ import MenuIcon from "@mui/icons-material/Menu"
 import Container from "@mui/material/Container"
 import Button from "@mui/material/Button"
 import RestaurantIcon from "@mui/icons-material/Restaurant"
-import {Link} from "react-router-dom"
-
-const pages = ["order", "search"]
+import { Link } from "react-router-dom"
 
 export default function ResponsiveAppBar() {
 
@@ -24,7 +22,7 @@ export default function ResponsiveAppBar() {
             component="div"
             sx={{ mr: 2, display: { xs: "none", md: "flex" } }}
           >
-             <RestaurantIcon />
+            <RestaurantIcon />
           </Typography>
 
           <Box sx={{ flexGrow: 1, display: { xs: "flex", md: "none" } }}>
@@ -47,15 +45,27 @@ export default function ResponsiveAppBar() {
             LOGO
           </Typography>
           <Box sx={{ flexGrow: 1, display: { xs: "none", md: "flex" } }}>
-            {pages.map((page) => (
-              <Button
-                key={page}
-                component={Link} to={`/${page}`}
-                sx={{ my: 2, color: "white", display: "block" }}
-              >
-                {page}
-              </Button>
-            ))}
+            <Button
+              key="order"
+              component={Link} to={`/order`}
+              sx={{ my: 2, color: "white", display: "block" }}
+            >
+              order
+            </Button>
+            <Button
+              key="table"
+              component={Link} to={`/table`}
+              sx={{ my: 2, color: "white", display: "block" }}
+            >
+              table
+            </Button>
+            <Button
+              key="item"
+              component={Link} to={`/item`}
+              sx={{ my: 2, color: "white", display: "block" }}
+            >
+              item
+            </Button>
           </Box>
         </Toolbar>
       </Container>
