@@ -8,7 +8,7 @@ import FormControl from "@mui/material/FormControl"
 import { useState } from "react"
 import Alert from "@mui/material/Alert"
 
-export default function SearchDataTable() {
+export default function SearchTable() {
     const [alert, setAlert] = useState(false)
     const [alertContent, setAlertContent] = useState("")
     const [inputQuery, setInputQuery] = useState("")
@@ -38,8 +38,8 @@ export default function SearchDataTable() {
     }
 
     const columns = [
-        { field: "item_id", headerName: "item name", width: 150 },
-        { field: "ended_at", headerName: "Estimated Time", width: 150 },
+        { field: "item_id", headerName: "item id", width: 150 },
+        { field: "prepare_time", headerName: "prepare_time( minutes )", width: 150 },
         {
             field: "delete",
             width: 75,
