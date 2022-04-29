@@ -13,15 +13,25 @@ class Table(Base, TableNameMixin):
 
 class Item(Base, TableNameMixin):
     id = sa.Column(mysql.INTEGER(10, unsigned=True), primary_key=True)
-    duration = sa.Column(mysql.INTEGER(10, unsigned=True), nullable=False)
 
 
 class Order(Base, TableNameMixin):
     id = sa.Column(mysql.INTEGER(10, unsigned=True), primary_key=True, autoincrement=True)
-    table_id=sa.Column(mysql.INTEGER(10, unsigned=True), sa.ForeignKey("table.id"), nullable=False)
-    item_id=sa.Column(mysql.INTEGER(10, unsigned=True), sa.ForeignKey("item.id"), nullable=False)
-    ended_at=sa.Column(sa.DateTime, nullable=False, server_default=sa.text("CURRENT_TIMESTAMP"))
+    table_id=sa.Column(mysql.INTEGER(10, unsigned=True), nullable=False)
+    item_id=sa.Column(mysql.INTEGER(10, unsigned=True), nullable=False)
+    prepare_time=sa.Column(mysql.INTEGER(10, unsigned=True), nullable=False)
 
     __table_args__ = (
-        sa.Index("table_id_item_id", "table_id", "item_id"),
+        sa.ForeignKeyConstraint(
+            ['table_id'], ['table.id'],
+            name='fk_table_id',
+            ondelete="CASCADE",
+        ),
+        sa.ForeignKeyConstraint(
+            ['item_id'], ['item.id'],
+            name='fk_item_id',
+            ondelete="CASCADE",
+        ),
+        sa.Index("ix_table_id", "table_id"),
+        sa.Index("ix_item_id", "item_id"),
     )
