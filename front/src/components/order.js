@@ -18,7 +18,7 @@ export default function CheckboxesGroup() {
 	const [tables, setTables] = React.useState([])
 	const [tableID, setTableID] = React.useState("")
 	const [checkedState, SetCheckedState] = React.useState([])
-	
+
 	useEffect(() => {
 		const abortCont = new AbortController()
 		fetch(`${process.env.REACT_APP_URL}/orders/items`, { signal: abortCont.signal })
@@ -64,10 +64,15 @@ export default function CheckboxesGroup() {
 
 	const submitOrder = (event) => {
 		event.preventDefault()
-		let ItemIDs = []
+		let insertItems = []
 		for (let [idx, isChecked] of checkedState.entries()) {
 			if (isChecked) {
-				ItemIDs.push(items[idx])
+				insertItems.push(
+					{
+						id: items[idx],
+						prepare_time: Math.floor(Math.random() * 15) + 1
+					}
+				)
 			}
 		}
 		if (!tables.includes(Number(tableID))) {
@@ -80,14 +85,14 @@ export default function CheckboxesGroup() {
 			{
 				method: "POST",
 				headers: { "Content-Type": "application/json" },
-				body: JSON.stringify({ item_ids: ItemIDs })
+				body: JSON.stringify({ items: insertItems })
 			}
 		).then((res) => {
 			if (!res.ok) {
 				return res.text().then(text => { throw new Error(text) })
 			} else {
 				setTableID("")
-				SetCheckedState((r)=>new Array(r.length).fill(false))
+				SetCheckedState((r) => new Array(r.length).fill(false))
 				console.log("insert succeed")
 			}
 		}).catch(err => {
@@ -96,7 +101,7 @@ export default function CheckboxesGroup() {
 		})
 	}
 
-	const paperStyle = { padding: "30px 100px", margin: "20px auto"}
+	const paperStyle = { padding: "30px 100px", margin: "20px auto" }
 
 	return (
 		<div>
@@ -107,8 +112,8 @@ export default function CheckboxesGroup() {
 				justifyContent: "center",
 			}}>
 				<Paper elevation={3} style={paperStyle}>
-					<FormControl sx={{ m: 10, gap: 5}} component="fieldset" variant="standard">
-						<FormLabel sx={{ fontSize: 30}}>Menu</FormLabel>
+					<FormControl sx={{ m: 10, gap: 5 }} component="fieldset" variant="standard">
+						<FormLabel sx={{ fontSize: 30 }}>Menu</FormLabel>
 						<FormGroup>
 							{items.map((item, index) => (
 								<FormControlLabel key={index}
