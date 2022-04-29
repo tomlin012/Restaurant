@@ -15,6 +15,7 @@ router = fastapi.APIRouter(
     default_response_class=fastapi.responses.JSONResponse,
 )
 
+
 @router.get(
     "/tables",
     response_model=List[int],
@@ -83,6 +84,7 @@ def insert_order(
         )
         session.commit()
     return
+
 
 @router.delete(
     "/table/{table_id}",
