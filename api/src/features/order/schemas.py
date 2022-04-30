@@ -1,5 +1,3 @@
-from typing import List
-
 import pydantic
 
 
@@ -9,7 +7,6 @@ class InsertOrderRequest(pydantic.BaseModel):
         prepare_time: int
 
     items: pydantic.conlist(Item, min_items=1)
-
 
 
 class DeleteOrderRequest(pydantic.BaseModel):
