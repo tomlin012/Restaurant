@@ -1,11 +1,10 @@
 import http
-
 from typing import List
+
 import fastapi
-import sqlalchemy as sa
 
 from src import database
-from src.features.order import models, schemas
+from src.features.order import schemas
 
 
 router = fastapi.APIRouter(
@@ -20,9 +19,11 @@ router = fastapi.APIRouter(
     response_model=List[int],
 )
 def get_tables():
-    stmt = sa.select(models.Table.id)
-    with database.session() as session:
-        return session.execute(stmt).scalars().all()
+    db_conn = database.generate_conn()
+    with db_conn:
+        cursor = db_conn.cursor()
+        cursor.execute("SELECT * FROM `table`")
+        return tuple(row["id"] for row in cursor.fetchall())
 
 
 @router.get(
@@ -30,9 +31,11 @@ def get_tables():
     response_model=List[int],
 )
 def get_items():
-    stmt = sa.select(models.Item.id)
-    with database.session() as session:
-        return session.execute(stmt).scalars().all()
+    db_conn = database.generate_conn()
+    with db_conn:
+        cursor = db_conn.cursor()
+        cursor.execute("SELECT * FROM `item`")
+        return tuple(row["id"] for row in cursor.fetchall())
 
 
 @router.get(
@@ -40,12 +43,19 @@ def get_items():
     response_model=List[schemas.GetOrderResponse],
 )
 def get_order_by_table_id(table_id: int):
-    stmt = (
-        sa.select(models.Order).
-        where(models.Order.table_id == table_id)
-    )
-    with database.session() as session:
-        return session.execute(stmt).scalars().all()
+    db_conn = database.generate_conn()
+    with db_conn:
+        cursor = db_conn.cursor()
+        cursor.execute("SELECT * FROM `order` WHERE table_id=%s", table_id)
+        return tuple(
+            {
+                "id": row["id"],
+                "table_id": row["table_id"],
+                "item_id": row["item_id"],
+                "prepare_time": row["prepare_time"],
+            }
+            for row in cursor.fetchall()
+        )
 
 
 @router.get(
@@ -53,12 +63,19 @@ def get_order_by_table_id(table_id: int):
     response_model=List[schemas.GetOrderResponse],
 )
 def get_order_by_table_id(item_id: int):
-    stmt = (
-        sa.select(models.Order).
-        where(models.Order.item_id == item_id)
-    )
-    with database.session() as session:
-        return session.execute(stmt).scalars().all()
+    db_conn = database.generate_conn()
+    with db_conn:
+        cursor = db_conn.cursor()
+        cursor.execute("SELECT * FROM `order` WHERE item_id=%s", item_id)
+        return tuple(
+            {
+                "id": row["id"],
+                "table_id": row["table_id"],
+                "item_id": row["item_id"],
+                "prepare_time": row["prepare_time"],
+            }
+            for row in cursor.fetchall()
+        )
 
 
 @router.post(
@@ -69,19 +86,17 @@ def insert_order(
     table_id: int,
     payload: schemas.InsertOrderRequest,
 ):
-    with database.session(expire_on_commit=False) as session:
-        session.bulk_insert_mappings(
-            models.Order,
+    db_conn = database.generate_conn()
+    with db_conn:
+        cursor = db_conn.cursor()
+        cursor.executemany(
+            '''INSERT INTO `order`(table_id, item_id, prepare_time) VALUES(%s, %s, %s)''',
             tuple(
-                {
-                    "table_id": table_id,
-                    "item_id": item.id,
-                    "prepare_time": item.prepare_time,
-                }
+                (table_id, item.id, item.prepare_time)
                 for item in payload.items
-            ),
+            )
         )
-        session.commit()
+        db_conn.commit()
     return
 
 
@@ -93,18 +108,13 @@ def delete_order(
     table_id: int,
     payload: schemas.DeleteOrderRequest,
 ):
-    stmt = (
-        sa.delete(models.Order).
-        where(
-            models.Order.table_id == table_id,
-            models.Order.id.in_(payload.order_ids),
-        )
+    stmt = ''' DELETE FROM  `order` WHERE table_id=%s AND id IN (%s) '''%(
+        table_id,
+        ",".join([str(order_id) for order_id in payload.order_ids]),
     )
-
-    with database.session() as session:
-        if session.execute(stmt).rowcount != len(payload.order_ids):
-            raise fastapi.HTTPException(
-                http.HTTPStatus.UNPROCESSABLE_ENTITY,
-                detail="order not found",
-            )
-        session.commit()
+    db_conn = database.generate_conn()
+    with db_conn:
+        cursor = db_conn.cursor()
+        cursor.execute(stmt)
+        db_conn.commit()
+    return

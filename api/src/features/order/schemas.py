@@ -21,6 +21,3 @@ class GetOrderResponse(pydantic.BaseModel):
     table_id: int
     item_id: int
     prepare_time: int
-
-    class Config:
-        orm_mode = True
