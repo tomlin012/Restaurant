@@ -15,6 +15,12 @@ How to run:
 Web Application
 -------------
 localhost:3000
+### features:
+Use navigation bar to go through different features.
+1. Insert order -> `/order`
+2. Search and delete order in specified table -> `/table`
+3. Search specified item -> `/item`
+
 
 
 API Document
